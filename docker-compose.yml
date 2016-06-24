@@ -4,7 +4,7 @@ services:
     build: gob/web
     container_name: web
     ports: ["8080:8080"]
-    command: -gen-addr=linkerd:4140 -word-addr=linkerd:4140 -gen-name=gobservice_gen -word-name=gobservice_word
+    command: -gen-addr=linkerd:4140 -word-addr=linkerd:4140 -gen-name=linkerdexamples_gen -word-name=linkerdexamples_word
 
   gen:
     build: gob/gen
