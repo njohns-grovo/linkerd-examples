@@ -195,8 +195,8 @@ func (ctx contextHeaders) applyTo(req *http.Request) {
 // gensvc: generates a stream of data given a word
 
 // Make a client to gensvc
-func MakeGenSvc(scheme, addr string) GenSvc {
-	return &genSvc{Client{"gen", scheme, addr, &http.Client{}}}
+func MakeGenSvc(scheme, addr, name string) GenSvc {
+	return &genSvc{Client{name, scheme, addr, &http.Client{}}}
 }
 
 func (svc *genSvc) Gen(
@@ -234,8 +234,8 @@ func (svc *genSvc) Gen(
 //
 
 // Make a client to wordsvc
-func MakeWordSvc(scheme, addr string) WordSvc {
-	return &wordSvc{Client{"word", scheme, addr, &http.Client{}}}
+func MakeWordSvc(scheme, addr, name string) WordSvc {
+	return &wordSvc{Client{name, scheme, addr, &http.Client{}}}
 }
 
 // Satisfy WordSvc with a Client
@@ -277,7 +277,9 @@ func dieIf(err error) {
 func main() {
 	addr := flag.String("srv", ":8080", "TCP address to listen on (in host:port form)")
 	genAddr := flag.String("gen-addr", "localhost:8181", "Address of the gen service")
+	genName := flag.String("gen-name", "gen", "Service name of gen service (for consul)")
 	wordAddr := flag.String("word-addr", "localhost:8282", "Address of the word service")
+	wordName := flag.String("word-name", "word", "Service name of word service (for consul)")
 	flag.Parse()
 	if flag.NArg() != 0 {
 		dieIf(fmt.Errorf("expecting zero arguments but got %d", flag.NArg()))
@@ -286,8 +288,8 @@ func main() {
 	server := &http.Server{
 		Addr: *addr,
 		Handler: &GobWeb{
-			genSvc:  MakeGenSvc("http", *genAddr),
-			wordSvc: MakeWordSvc("http", *wordAddr),
+			genSvc:  MakeGenSvc("http", *genAddr, *genName),
+			wordSvc: MakeWordSvc("http", *wordAddr, *wordName),
 		},
 	}
 	dieIf(server.ListenAndServe())
