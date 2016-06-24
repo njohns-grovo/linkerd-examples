@@ -1,49 +1,11 @@
 admin:
   port: 9990
 
-namers:
-- kind: io.l5d.consul
-  experimental: true
-  host: 192.168.99.100
-  port: 8500
-
 routers:
-- protocol: http
-  baseDtab: |
-    # /method   => /$/io.buoyant.http.anyMethodPfx/host;
-    # /http/1.1 => /method;
-    /http/1.1/* => /#/io.l5d.consul/dc1;
-  httpAccessLog: logs/access.log
-  label: int
-  dstPrefix: /http
-  servers:
-  - port: 4140
-    ip: 0.0.0.0
-
-- protocol: thrift
-  label: /host/thrift-framed
-  baseDtab: |
-    /host     => /#/io.l5d.fs;
-    /thrift   => /host/thrift-framed;
-  client:
-    thriftFramed: true
-    thriftProtocol: binary
-  servers:
-  - port: 4141
-    ip: 0.0.0.0
-    thriftFramed: true
-    thriftProtocol: binary
-
-- protocol: thrift
-  label: /host/thrift-buffered
-  baseDtab: |
-    /host     => /#/io.l5d.fs;
-    /thrift   => /host/thrift-buffered;
-  client:
-    thriftFramed: false
-    thriftProtocol: compact
-  servers:
-  - port: 4142
-    ip: 0.0.0.0
-    thriftFramed: false
-    thriftProtocol: compact
+  - protocol: http
+    interpreter:
+      kind: io.l5d.namerd
+      dst: /$/inet/namerd/4100
+    servers:
+      - port: 4140
+        ip: 0.0.0.0

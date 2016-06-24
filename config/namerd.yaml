@@ -1,0 +1,21 @@
+admin:
+  port: 9991
+
+namers:
+  - kind: io.l5d.consul
+    experimental: true
+    host: 192.168.99.100
+    port: 8500
+
+storage:
+  kind: io.l5d.inMemory
+  namespaces:
+    default: |
+      /http/1.1/* => /#/io.l5d.consul/dc1;
+interfaces:
+- kind: io.l5d.thriftNameInterpreter
+  ip: 0.0.0.0
+  port: 4100
+- kind: io.l5d.httpController
+  ip: 0.0.0.0
+  port: 4180

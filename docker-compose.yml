@@ -46,3 +46,13 @@ services:
     command: /io.buoyant/linkerd/config/linkerd.yaml
     links:
       - consul
+      - namerd
+
+  namerd:
+    image: buoyantio/namerd:0.6.0
+    container_name: namerd
+    ports: ["4100:4100", "4180:4180", "9991:9991"]
+    volumes: ["./config:/io.buoyant/linkerd/config:ro"]
+    command: /io.buoyant/linkerd/config/namerd.yaml
+    links:
+      - consul
